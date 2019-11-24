@@ -21,8 +21,8 @@ public class FasterLCS {
         /* define constants */
         static long MAXVALUE =  2000000000;
         static long MINVALUE = -2000000000;
-        static int numberOfTrials = 1;
-        static int MAXINPUTSIZE  = (int) Math.pow(1.5,10);
+        static int numberOfTrials = 50;
+        static int MAXINPUTSIZE  = (int) Math.pow(1.5,24);
         static int MININPUTSIZE  =  1;
 
         static int randomNumber = 0;
@@ -33,8 +33,8 @@ public class FasterLCS {
         static Random rnd = new Random();
         static  String filepath1 = "/home/diana/JaneEyre.txt";
 
-        static String s1 = "BELOWIFJASDIEKJSAJASDSASHFAEBD";
-        static String s2 = "AAEIOLOOSIDJSDIJAWEJKNBE";
+        static String s1 = "GSDFVSDERTEYDSFGSETYRDYUJYFDGHSDRTGSDFGGGGSDRTARFGXDFVSERTSSDFGSDRTSERTSEDFGSERTSERTWERTWERTERTBDXJFVART";
+        static String s2 = "DSDFAERTRUTYJFSDFGSDFGSDFGSDFGSDFGSDFGGGGSDRTARFGXDFVSERTERSTGHAE";
         static String s12 = "";
         static String s22 = "";
         static LCS result = new LCS();
@@ -51,11 +51,11 @@ public class FasterLCS {
             // run the whole experiment at least twice, and expect to throw away the data from the earlier runs, before java has fully optimized
 
             System.out.println("Running first full experiment...");
-            runFullExperiment("BruteForceLCSEnglishCompare2Text-Exp1-ThrowAway.txt");
+            runFullExperiment("FasterLCSEnglighText-Exp1-ThrowAway.txt");
             System.out.println("Running second full experiment...");
-            runFullExperiment("BruteForceLCSEnglishCompare2Text-Exp2.txt");
+            runFullExperiment("FasterLCSEnglighText-Exp2.txt");
             System.out.println("Running third full experiment...");
-            runFullExperiment("BruteForceLCSEnglishCompare2Text-Exp3.txt");
+            runFullExperiment("FasterLCSEnglighText-Exp3.txt");
         }
 
         static void runFullExperiment(String resultsFileName) throws Exception {
@@ -82,7 +82,7 @@ public class FasterLCS {
             ThreadCpuStopWatch TrialStopwatch = new ThreadCpuStopWatch(); // for timing an individual trial
 
             //add headers to text file
-            resultsWriter.println("#X(Value) LCSLength  N(Size)  AverageTime        FibNumber   NumberOfTrials"); // # marks a comment in gnuplot data
+            resultsWriter.println("#X(Value) LCSLength  N(Size)  AverageTime  NumberOfTrials"); // # marks a comment in gnuplot data
             resultsWriter.flush();
 
             /* for each size of input we want to test: in this case starting small and doubling the size each time */
@@ -93,7 +93,7 @@ public class FasterLCS {
                 //s22= RandomString(inputSize);
 
                 ///generate strings with the same length and every character is the same - worst case scenario
-                StringBuilder sb = new StringBuilder();
+                /*StringBuilder sb = new StringBuilder();
                 for(int i = 0; i < inputSize; i++){
                     sb.append('C');
                 }
@@ -102,19 +102,19 @@ public class FasterLCS {
                 for(int i = 0; i < inputSize; i++){
                     sb2.append('C');
                 }
-                s22 = sb2.toString();
+                s22 = sb2.toString();*/
 
                 //Create two strings from English Text String
-                /*EnglishText = readFileAsString("/home/diana/senseandsensibility");
+                EnglishText = readFileAsString("/home/diana/senseandsensibility");
                 EnglishText = EnglishText.replaceAll("\\s", "");
                 EnglishText2 = readFileAsString("/home/diana/prideandprejudice");
                 EnglishText2 = EnglishText2.replaceAll("\\s", "");
                 //System.out.println(EnglishText);
-                //s12 = SubstringEnglishText(inputSize, EnglishText);
-                //s22 = SubstringEnglishText(inputSize, EnglishText);
+                s12 = SubstringEnglishText(inputSize, EnglishText);
+                s22 = SubstringEnglishText(inputSize, EnglishText);
 
-                s12 = EnglishText;
-                s22 = EnglishText2;*/
+                //s12 = EnglishText;
+                //s22 = EnglishText2;
 
                 //System.out.println("s1 = " + s12);
                 //System.out.println("s2 = " + s22);
@@ -155,7 +155,7 @@ public class FasterLCS {
                     //TrialStopwatch.start(); // *** uncomment this line if timing trials individually
                     /* run the function we're testing on the trial input */
                     result = LargestCommonSubstring(s12, s22);
-                    System.out.println("LSC length = " + result.LcsLength);
+                    //System.out.println("LSC length = " + result.LcsLength);
                     //System.out.println("Index at String 1 = " + result.lcsStartIndexInS1);
                     //System.out.println("Index at String 2 = " + result.lcsStartIndexInS2);
 
@@ -183,30 +183,33 @@ public class FasterLCS {
 
         //create substring from English Text
         public static String SubstringEnglishText(int x, String EngText){
-            StringBuilder sb = new StringBuilder();
-            int randomStartIndex = 0;
-            randomStartIndex =(int) (0 + Math.random() * ((EngText.length() - x) - 0));
+            //Declare variables
+            StringBuilder sb = new StringBuilder(); //create string builder to assist in creating string
+            int randomStartIndex = 0; //random start index for english text
+            randomStartIndex =(int) (0 + Math.random() * ((EngText.length() - x) - 0)); //get random number for start of string index
             int i = 0;
-
+            //loop through the number of characters to get string
             for(i = 0; i < x; i++){
-                sb.append((EngText.charAt(randomStartIndex + i)));
+                sb.append((EngText.charAt(randomStartIndex + i))); //append string builder
             }
             //System.out.println("new String = " + sb.toString());
             return sb.toString();
         }
 
         public static String readFileAsString(String fileName) throws Exception {
+            //declare string variable to read in file
             String data = "";
-            data = new String(Files.readAllBytes(Paths.get(fileName)));
+            data = new String(Files.readAllBytes(Paths.get(fileName))); //read the file into the string variable
             return data;
         }
 
         //create a random string
         public static String RandomString(int x){
-            StringBuilder sb = new StringBuilder();
+            //declare variables
+            StringBuilder sb = new StringBuilder(); //stringbuilder class
             int y = 0;
             for(y = 0; y < x; y++){
-                sb.append((fnl.charAt(rnd.nextInt(fnl.length()))));
+                sb.append((fnl.charAt(rnd.nextInt(fnl.length())))); //append the string with a random character from string of the alphabet
             }
             return sb.toString();
         }
@@ -217,34 +220,35 @@ public class FasterLCS {
             LCS resultLcs =new LCS();
             resultLcs = LargestCommonSubstring(s1, s2); //run the largest common string and return the result
             //print the result to verify it is correct
-            System.out.println("Testing..." + s1 + " and " + s2 + " lcs = " + resultLcs.LcsLength + "," + resultLcs.lcsStartIndexInS1 + "," + resultLcs.lcsStartIndexInS2);
+            System.out.println("Testing..." + s1 + " and " + s2 + " lcs = " + resultLcs.LcsLength);
         }
 
         public static LCS LargestCommonSubstring(String s1, String s2){
             /*Declare Variables*/
-            LCS common = new LCS();
-            int l1 = s1.length() - 1;
-            int l2 = s2.length() - 1;
-            common.LcsLength = 0;
-            common.lcsStartIndexInS1 = 0;
-            common.lcsStartIndexInS2 = 0;
-            int i, j, k = 0;
-            for(i = 0; i <= l1; i++ ){ //loop through the first string
-                for(j = 0; j<= l2; j++){ //loop through the second string
-                    for(k=0; k<= Math.min(l1-i, l2-j); k++){  //loop through the substring
-                        if(s1.charAt(i + k) != s2.charAt(j+k)) //check if the characters from string 1 and 2 are the same or not
-                        {
-                            break;  //if they are not the same, exit the loop
-                        }
+            LCS common = new LCS(); //new LCS class instance
+            int l1 = s1.length(); //string1 length
+            int l2 = s2.length(); //string2 length
+            common.LcsLength = 0; //length of the longest comment substring
+            int i = 0;
+            int j = 0;
+            int k = 0;
+            int[][] arrayInt = new int[l1+1][l2 + 1]; //declare integer array store the lengths of the longest common substrings
+            int count = 0;
+            //loop through the two strings to find the longest common substring
+            for(i = 0; i <= l1; i++ ) { //loop through the first string
+                for (j = 0; j <= l2; j++) { //loop through the second string
+                    if(i == 0 || j == 0){
+                        arrayInt[i][j] = 0; //used as space holder
                     }
-                    if(k >= common.LcsLength){ //check if the length of the substring (k) is the longest substring.
-                        common.LcsLength = k; //if it's the longest, set the LCS length to k
-                        common.lcsStartIndexInS1 = i; //set the start index of the substring of s1 to i
-                        common.lcsStartIndexInS2 = j; //set the start index of the substring of s2 to j
+                    else if(s1.charAt(i-1) == s2.charAt(j-1)){ //check to see if the two characters are the same
+                        arrayInt[i][j] = arrayInt[i-1][j-1] + 1; //if they are the same, populate the array with the length
+                        common.LcsLength = Integer.max(common.LcsLength, arrayInt[i][j]); //find the max number with current lcs and last lcs
+                    }
+                    else{
+                        arrayInt[i][j] = 0; //if they don't match, enter 0
                     }
                 }
             }
-            //return the class LCS (largest common string)
             return  common;
         }
         //count the number of bits required for current fib number
