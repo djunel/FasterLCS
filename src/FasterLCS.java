@@ -51,11 +51,11 @@ public class FasterLCS {
             // run the whole experiment at least twice, and expect to throw away the data from the earlier runs, before java has fully optimized
 
             System.out.println("Running first full experiment...");
-            runFullExperiment("FasterLCSEnglighText-Exp1-ThrowAway.txt");
+            runFullExperiment("FasterLCSEnglishText2-Exp1-ThrowAway.txt");
             System.out.println("Running second full experiment...");
-            runFullExperiment("FasterLCSEnglighText-Exp2.txt");
+            runFullExperiment("FasterLCSEnglishText2-Exp2.txt");
             System.out.println("Running third full experiment...");
-            runFullExperiment("FasterLCSEnglighText-Exp3.txt");
+            runFullExperiment("FasterLCSEnglishText2-Exp3.txt");
         }
 
         static void runFullExperiment(String resultsFileName) throws Exception {
@@ -82,7 +82,7 @@ public class FasterLCS {
             ThreadCpuStopWatch TrialStopwatch = new ThreadCpuStopWatch(); // for timing an individual trial
 
             //add headers to text file
-            resultsWriter.println("#X(Value) LCSLength  N(Size)  AverageTime  NumberOfTrials"); // # marks a comment in gnuplot data
+            resultsWriter.println("#X(Value) LCSLength  N(Size)  AverageTime  NumberOfTrials    doublingRatio"); // # marks a comment in gnuplot data
             resultsWriter.flush();
 
             /* for each size of input we want to test: in this case starting small and doubling the size each time */
@@ -105,13 +105,13 @@ public class FasterLCS {
                 s22 = sb2.toString();*/
 
                 //Create two strings from English Text String
-                EnglishText = readFileAsString("/home/diana/senseandsensibility");
+               EnglishText = readFileAsString("/home/diana/senseandsensibility");
                 EnglishText = EnglishText.replaceAll("\\s", "");
                 EnglishText2 = readFileAsString("/home/diana/prideandprejudice");
                 EnglishText2 = EnglishText2.replaceAll("\\s", "");
                 //System.out.println(EnglishText);
                 s12 = SubstringEnglishText(inputSize, EnglishText);
-                s22 = SubstringEnglishText(inputSize, EnglishText);
+                s22 = SubstringEnglishText(inputSize, EnglishText2);
 
                 //s12 = EnglishText;
                 //s22 = EnglishText2;
@@ -170,12 +170,12 @@ public class FasterLCS {
                 //skip this round if this is the first one (no previous average for calculation)
                 if(inputSize != 0){
                     doublingTotal = averageTimePerTrialInBatch/averageArray[x-1]; //Calculate doubling ratio
-
+                    System.out.println("doubling total = " + doublingTotal);
                 }
                 x++;
                 int countingbits = countBits(inputSize);
                 /* print data for this size of input */
-                resultsWriter.printf("%6d %d %6d %15.2f %4d\n",inputSize, result.LcsLength, countingbits, averageTimePerTrialInBatch, numberOfTrials); // might as well make the columns look nice
+                resultsWriter.printf("%6d %d %6d %15.2f %4d  %10.2f\n",inputSize, result.LcsLength, countingbits, averageTimePerTrialInBatch, numberOfTrials, doublingTotal); // might as well make the columns look nice
                 resultsWriter.flush();
                 System.out.println(" ....done.");
             }
